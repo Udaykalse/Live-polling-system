@@ -9,10 +9,15 @@ app.use(cors());
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:5173', 
+    // origin: 'http://localhost:5173', 
+    origin:'http://live-polling-system.vercel.app',
     methods: ['GET', 'POST'],
   },
 });
+app.use(cors({
+  origin: 'http://live-polling-system.vercel.app' 
+}));
+
 
 let currentPoll = null;
 let pollResults = {
