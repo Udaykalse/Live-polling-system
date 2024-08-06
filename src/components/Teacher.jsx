@@ -1,8 +1,8 @@
-// Teacher.jsx
+
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3000'); // URL of your backend
+const socket = io('https://lsb-git-main-udaykalses-projects.vercel.app'); 
 
 const Teacher = () => {
   const [question, setQuestion] = useState('');
