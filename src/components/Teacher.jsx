@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
-import { createPoll, endPoll } from '../socket';
+// Teacher.jsx
+import React, { useState, useEffect } from 'react';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3000'); // URL of your backend
 
 const Teacher = () => {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [timeLimit, setTimeLimit] = useState(60);
+  const [pollResults, setPollResults] = useState(null);
+
+  useEffect(() => {
+    socket.on('pollResults', (results) => {
+      setPollResults(results);
+    });
+
+    return () => {
+      socket.off('pollResults');
+    };
+  }, []);
 
   const handleOptionChange = (index, value) => {
     const newOptions = [...options];
@@ -14,7 +28,7 @@ const Teacher = () => {
   };
 
   const handleCreatePoll = () => {
-    createPoll({ question, options, correctAnswer, timeLimit });
+    socket.emit('createPoll', { question, options, correctAnswer, timeLimit });
     setQuestion('');
     setOptions(['', '', '', '']);
     setCorrectAnswer('');
@@ -22,7 +36,7 @@ const Teacher = () => {
   };
 
   const handleEndPoll = () => {
-    endPoll();
+    socket.emit('endPoll');
   };
 
   return (
@@ -71,6 +85,19 @@ const Teacher = () => {
       >
         End Poll
       </button>
+
+      {pollResults && (
+        <div className="poll-results mt-4">
+          <h3 className="text-xl mb-2">Poll Results</h3>
+          <div className="poll-results-list">
+            {pollResults.results.map((result, index) => (
+              <div key={index} className="poll-result mb-2">
+                <span className="font-bold">{result.answer}:</span> {result.count} votes ({result.percentage}%)
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

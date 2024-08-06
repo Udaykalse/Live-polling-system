@@ -1,21 +1,25 @@
-const http = require('http');
 const express = require('express');
-const cors = require('cors');
+const http = require('http');
 const socketIo = require('socket.io');
+const cors = require('cors');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: ['http://localhost:5173', 'https://live-polling-system-o2vvcnup0-udaykalses-projects.vercel.app'], // Allow both local and production URLs
-    methods: ['GET', 'POST'],
-  },
-});
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://live-polling-system-o2vvcnup0-udaykalses-projects.vercel.app'], // Allow both local and production URLs
+  origin: ['http://localhost:5173', 'http://localhost:5174'], 
+  methods: ['GET', 'POST'],
+  credentials: true
 }));
 
+const server = http.createServer(app);
+
+const io = socketIo(server, {
+  cors: {
+    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+});
 
 let currentPoll = null;
 let pollResults = {
@@ -49,7 +53,7 @@ io.on('connection', (socket) => {
     if (result) {
       result.count += 1;
       result.percentage = ((result.count / pollResults.results.length) * 100).toFixed(2);
-      io.emit('pollResults', pollResults); 
+      io.emit('pollResults', pollResults);
     }
   });
 });
@@ -57,3 +61,4 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
+// !
