@@ -1,21 +1,19 @@
-const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
+const express = require('express');
 const cors = require('cors');
+const socketIo = require('socket.io');
 
 const app = express();
-app.use(cors());
-
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    // origin: 'http://localhost:5173', 
-    origin:'https://live-polling-system-o2vvcnup0-udaykalses-projects.vercel.app',
+    origin: ['http://localhost:5173', 'https://live-polling-system-o2vvcnup0-udaykalses-projects.vercel.app'], // Allow both local and production URLs
     methods: ['GET', 'POST'],
   },
 });
+
 app.use(cors({
-  origin: 'https://live-polling-system-o2vvcnup0-udaykalses-projects.vercel.app' 
+  origin: ['http://localhost:5173', 'https://live-polling-system-o2vvcnup0-udaykalses-projects.vercel.app'], // Allow both local and production URLs
 }));
 
 
